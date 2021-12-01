@@ -1,129 +1,178 @@
-import React, { Component } from 'react';
-import './Personal.css';
+import React from 'react';
 
-export default class Personal_details extends Component {
+class Personal_details  extends React.Component {
+ userData;
 
-    userData;
+    constructor() {
+      super();
+      this.state = {
+        fields: {},
+        errors: {}
+      }
 
-    constructor(props) {
-        super(props);
+      this.handleChange = this.handleChange.bind(this);
+      this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
-        this.onChangeName = this.onChangeName.bind(this);
-        this.onChangeGender = this.onChangeGender.bind(this);
-        this.onChangeCountry = this.onChangeCountry.bind(this);
-        this.onChangeState = this.onChangeState.bind(this);
-        this.onChangeCity = this.onChangeCity.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-        
-        this.state = {
-            name: '',
-            gender:'',
+    };
+
+    handleChange(e) {
+      let fields = this.state.fields;
+      fields[e.target.name] = e.target.value;
+      this.setState({
+        fields
+      });
+
+    }
+
+    submituserRegistrationForm(e) {
+      e.preventDefault();
+      if (this.validateForm()) {
+          let fields = {};
+          fields["username"] = "";
+          fields["gender"] = "";
+          fields["country"] = "";
+          fields["state"] = "";
+          fields["city"] = "";
+          this.setState({fields:fields});
+          alert("Form submitted");
+      }
+
+    }
+
+    validateForm() {
+
+      let fields = this.state.fields;
+      let errors = {};
+      let formIsValid = true;
+
+      if (!fields["username"]) {
+        formIsValid = false;
+        errors["username"] = "*Please enter your username.";
+      }
+
+      if (typeof fields["username"] !== "undefined") {
+        if (!fields["username"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["username"] = "*Please enter alphabet characters only.";
+        }
+      }
+
+      if (!fields["gender"]) {
+        formIsValid = false;
+        errors["gender"] = "*Please select your gender.";
+      }
+
+      if (!fields["country"]) {
+        formIsValid = false;
+        errors["country"] = "*Please enter your country.";
+      }
+
+      if (typeof fields["country"] !== "undefined") {
+        if (!fields["country"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["country"] = "*Please enter alphabet characters only.";
+        }
+      }
+
+      if (!fields["state"]) {
+        formIsValid = false;
+        errors["state"] = "*Please enter your state.";
+      }
+
+      if (typeof fields["state"] !== "undefined") {
+        if (!fields["state"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["state"] = "*Please enter alphabet characters only.";
+        }
+      }
+
+      if (!fields["city"]) {
+        formIsValid = false;
+        errors["city"] = "*Please enter your city.";
+      }
+
+      if (typeof fields["city"] !== "undefined") {
+        if (!fields["city"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["city"] = "*Please enter alphabet characters only.";
+        }
+      }
+
+      this.setState({
+        errors: errors
+      });
+      return formIsValid;
+
+    }
+
+    componentDidMount() {
+      this.userData = JSON.parse(localStorage.getItem('user'));
+
+      if (localStorage.getItem('user')) {
+          this.setState({
+            username: this.userData.username,
+            gender: this.userData.gender,
+            country: this.userData.country,
+            state: this.userData.state,
+            city: this.userData.city,
+
+          })
+      } else {
+          this.setState({
+            username: '',
+            gender: '',
             country: '',
             state: '',
-            city:'',
-         
+            city: '',
 
-        }
-        // this.handleChange = this.handleChange.bind(this);
-        // this.submituserRegister = this.submituserRegister.bind(this);
-    }
+          })
+      };
+  };
 
+  componentWillUpdate(nextProps, nextState) {
+      localStorage.setItem('user', JSON.stringify(nextState));
+  };
 
-    // Form Events
-    onChangeName(e) {
-        this.setState({ name: e.target.value })
-    }
-    onChangeGender(e) {
-        this.setState({ gender: e.target.value })
-    }
+  render() {
+    return (
+    <div id="main-registration-container">
+     <div id="register">
+        <h3 className="heading">Personal_details</h3>
+        <form name="userRegistrationForm"  onSubmit= {this.submituserRegistrationForm} >
+        <label>Name:</label>
+        <input className="form_input" type="text" name="username" value={this.state.fields.username} onChange={this.handleChange} />
+        <div className="errorMsg">{this.state.errors.username}</div>
+        <label>Gender:</label>
+        <select name="gender" id="dropdown" value={this.state.fields.gender} 
+            onChange={this.handleChange} >    
+           <option value="select">--Select--</option>    
+           <option value="male">Male</option>    
+           <option value="female">Female</option>    
+           <option value="female">Other</option>    
+         </select>   
+        <div className="errorMsg">{this.state.errors.gender}</div>
+        <label>Country:</label>
+        <input className="form_input" type="text" name="country" value={this.state.fields.country} onChange={this.handleChange}  />
+        <div className="errorMsg">{this.state.errors.country}</div>
+        <label>State:</label>
+        <input className="form_input" type="text" name="state" value={this.state.fields.state} onChange={this.handleChange}  />
+        <div className="errorMsg">{this.state.errors.state}</div>
+        <label>City:</label>
+        <input className="form_input" type="text" name="city" value={this.state.fields.city} onChange={this.handleChange}   />
+        <div className="errorMsg">{this.state.errors.city}</div>
+         {/* <input type="submit" className="button"  value="Next"/> */}
+         <a className="style" href="Company_details" > 
+          <button type="submit"  className="button" >
+         Next </button></a>
+        </form>
+    </div>
+</div>
 
-    onChangeCountry(e) {
-        this.setState({ country: e.target.value })
-    }
-
-    onChangeState(e) {
-        this.setState({ state: e.target.value })
-    }
-    onChangeCity(e) {
-        this.setState({ city: e.target.value })
-    }
-
-    onSubmit(e) {
-        e.preventDefault()
-
-    }
-
-    // React Life Cycle
-    componentDidMount() {
-        this.userData = JSON.parse(localStorage.getItem('user'));
-
-        if (localStorage.getItem('user')) {
-            this.setState({
-                name: this.userData.name,
-                gender : this.userData.gender,
-                country : this.userData.country,
-                state: this.userData.state,
-                city: this.userData.city
-            })
-        } else {
-            this.setState({
-                name: '',
-                gender:'',
-                country: '',
-                state: '',
-                city:''
-            })
-        };
-    };
-
-    componentWillUpdate(nextProps, nextState) {
-        localStorage.setItem('user', JSON.stringify(nextState));
-    };
-
-
-    render() {
-        return (
-            <div className="head">
-            <div className="register">
-                <form onSubmit={this.onSubmit}>
-                    <div>
-                        <label>Name</label>
-                        <input type="text" value={this.state.name} 
-                              onChange={this.onChangeName} />
-                    </div>
-                    <div>
-                        <label>Gender</label>
-                        <select name="gender" id="dropdown"  value={this.state.gender}
-                            onChange={this.onChangeGender}  >    
-                        <option value="select">--Select--</option>   
-                        <option value="male">Male</option>  
-                        <option value="female">Female</option> 
-                        <option value="female">Other</option>  
-                       </select>  
-                    </div>
-                    <div>
-                        <label>Country</label>
-                        <input type="text" value={this.state.country} 
-                        onChange={this.onChangeCountry} />
-                    </div>
-                    <div>
-                        <label>State</label>
-                        <input type="text" value={this.state.state} 
-                        onChange={this.onChangeState} />
-                    </div>
-                    <div>
-                        <label>City</label>
-                        <input type="text" value={this.state.city} 
-                        onChange={this.onChangeCity} />
-                    </div>
-                   
-                    <button type="submit" className="btn btn-primary btn-block">
-                    <a href="Company_details" >Next </a>
-                    </button>
-                   
-                </form>
-            </div>
-         </div>
-        );
-    };
+      );
+  };
 };
+
+
+export default Personal_details ;
+
+

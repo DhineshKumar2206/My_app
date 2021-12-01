@@ -1,119 +1,178 @@
-import React, { Component } from 'react';
-import './Company_details.css';
+import React from 'react';
 
-export default class Company_details extends Component {
+class Company_details  extends React.Component {
 
-    userData;
+  userData;
 
     constructor(props) {
-        super(props);
+      super(props);
+      this.state = {
+        fields: {},
+        errors: {}
+      }
 
-        this.onChangeFile = this.onChangeFile.bind(this);
-        this.onChangeCompany_name = this.onChangeCompany_name.bind(this);
-        this.onChangeEmail_id = this.onChangeEmail_id.bind(this);
-        this.onChangeJob_title = this.onChangeJob_title.bind(this);
-        this.onChangeExperience = this.onChangeExperience.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
-        this.state = {
-            file: '',
-            company_name: '',
-            email_id: '',
-            job_title: '',
-            experience: ''
+    };
+
+    handleChange(e) {
+      let fields = this.state.fields;
+      fields[e.target.name] = e.target.value;
+      this.setState({
+        fields
+      });
+
+    }
+
+    submituserRegistrationForm(e) {
+      e.preventDefault();
+      if (this.validateForm()) {
+          let fields = {};
+          fields["file"] = "";
+          fields["emailid"] = "";
+          fields["company_name"] = "";
+          fields["job_title"] = "";
+          fields["experience"] = "";
+          this.setState({fields:fields});
+          alert("Form submitted");
+      }
+
+    }
+
+    validateForm() {
+
+      let fields = this.state.fields;
+      let errors = {};
+      let formIsValid = true;
+
+      if (!fields["file"]) {
+        formIsValid = false;
+        errors["file"] = "*Please choose your file.";
+      }
+
+
+
+      if (!fields["emailid"]) {
+        formIsValid = false;
+        errors["emailid"] = "*Please enter your email-ID.";
+      }
+
+      if (typeof fields["emailid"] !== "undefined") {
+        //regular expression for email validation
+        var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+        if (!pattern.test(fields["emailid"])) {
+          formIsValid = false;
+          errors["emailid"] = "*Please enter valid email-ID.";
         }
-    }
+      }
 
-    // Form Events
-    onChangeFile(e) {
-        this.setState({ file: e.target.value })
-    }
+      if (!fields["company_name"]) {
+        formIsValid = false;
+        errors["company_name"] = "*Please enter your company_name.";
+      }
 
-    onChangeCompany_name(e) {
-        this.setState({ company_name: e.target.value })
-    }
+      if (typeof fields["company_name"] !== "undefined") {
+        if (!fields["company_name"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["company_name"] = "*Please enter valid company_name.";
+        }
+      }
 
-    onChangeEmail_id(e) {
-        this.setState({ email_id: e.target.value })
-    }
+      if (!fields["job_title"]) {
+        formIsValid = false;
+        errors["job_title"] = "*Please enter your job_title.";
+      }
 
-    onChangeJob_title(e) {
-        this.setState({ job_title: e.target.value })
-    }
+      if (typeof fields["job_title"] !== "undefined") {
+        if (!fields["job_title"].match(/^[a-zA-Z ]*$/)) {
+          formIsValid = false;
+          errors["job_title"] = "*Please enter alphabet characters only.";
+        }
+      }
 
-    onChangeExperience(e) {
-        this.setState({ experience: e.target.value })
-    }
-    onSubmit(e) {
-        e.preventDefault()
+      if (!fields["experience"]) {
+        formIsValid = false;
+        errors["experience"] = "*Please enter your experience.";
+      }
+
+      if (typeof fields["experience"] !== "undefined") {
+        if (!fields["experience"].match(/^[0-9]$/)) {
+          formIsValid = false;
+          errors["experience"] = "*Please enter alphabet characters only.";
+        }
+      }
+
+      this.setState({
+        errors: errors
+      });
+      return formIsValid;
+
 
     }
-
-    // React Life Cycle
     componentDidMount() {
-        this.userData = JSON.parse(localStorage.getItem('user'));
+      this.userData = JSON.parse(localStorage.getItem('user'));
 
-        if (localStorage.getItem('user')) {
-            this.setState({
-                file: this.userData.file,
-                company_name: this.userData.company_name,
-                email_id: this.userData.email_id,
-                job_title: this.userData.job_title,
-                experience: this.userData.experience
-            })
-        } else {
-            this.setState({
-                file: '',
-                email_id: '',
-                company_name: '',
-                job_title: '',
-                experience: '',
-            })
-        };
-    };
+      if (localStorage.getItem('user')) {
+          this.setState({
+              file: this.userData.file,
+              emailid: this.userData.emailid,
+              company_name: this.userData.company_name,
+              job_title: this.userData.job_title,
+              experience: this.userData.experience,
 
-    componentWillUpdate(nextProps, nextState) {
-        localStorage.setItem('user', JSON.stringify(nextState));
-    };
+          })
+      } else {
+          this.setState({
+            file: '',
+            emailid: '',
+            company_name: '',
+            job_title: '',
+            experience: '',
+
+          })
+      };
+  };
+
+  componentWillUpdate(nextProps, nextState) {
+      localStorage.setItem('user', JSON.stringify(nextState));
+  };
 
 
-    render() {
-        return (
-            <div className="head">
-            <div className="register">
-                <form onSubmit={this.onSubmit}>
-                    <div>
-                        <label>File</label>
-                        <input type="File" value={this.state.file}
-                         onChange={this.onChangeFile} />
-                    </div>
-                    <div>
-                        <label>Email_id</label>
-                        <input type="email" value={this.state.email_id}
-                         onChange={this.onChangeEmail_id} />
-                    </div>
-                    <div>
-                        <label>Company_name</label>
-                        <input type="text" value={this.state.company_name}
-                         onChange={this.onChangeCompany_name} />
-                    </div>
-                    <div>
-                        <label>Job_title</label>
-                        <input type="tel" value={this.state.job_title} 
-                        onChange={this.onChangeJob_title} />
-                    </div>
-                    <div>
-                        <label>experience</label>
-                        <input type="number" value={this.state.experience} 
-                        onChange={this.onChangeExperience} />
-                    </div>
-                    <button type="button" className="btn btn-primary btn-block">
-                    <a href="Personal_details" >Back </a> </button>
-                    <button type="submit" className="btn btn-primary btn-block"> 
-                    <a href="Email_verification" >Next </a></button>
-                </form>
-            </div>
-        </div>
-        );
-    };
+  render() {
+    return (
+    <div id="main-registration-container">
+     <div id="register">
+        <h3 className="heading">Company_details</h3>
+        <form name="userRegistrationForm"  onSubmit= {this.submituserRegistrationForm} >
+        <label>File</label>
+        <input type="file" name="file" value={this.state.fields.file} onChange={this.handleChange} />
+        <div className="errorMsg">{this.state.errors.file}</div>
+        <label>Email ID:</label>
+        <input className="form_input" type="text" name="emailid" value={this.state.fields.emailid} onChange={this.handleChange}  />
+        <div className="errorMsg">{this.state.errors.emailid}</div>
+        <label>Company_name:</label>
+        <input className="form_input" type="text" name="company_name" value={this.state.fields.company_name} onChange={this.handleChange}   />
+        <div className="errorMsg">{this.state.errors.company_name}</div>
+        <label>Job_title:</label>
+        <input className="form_input" type="text" name="job_title" value={this.state.fields.job_title} onChange={this.handleChange}   />
+        <div className="errorMsg">{this.state.errors.job_title}</div>
+        <label>Experience:</label>
+        <input className="form_input" type="text" name="experience" value={this.state.fields.experience} onChange={this.handleChange}   />
+        <div className="errorMsg">{this.state.errors.experience}</div>
+        <a className="style" href="/" >  <button type="button" className="button" >
+        Back  </button></a>
+        <a className="style" href="Email_verification" >  <button type="submit" className="button"> 
+        Next </button></a>
+        </form>
+    </div>
+</div> 
+
+      );
+  };
 };
+
+
+export default Company_details ;
+
+

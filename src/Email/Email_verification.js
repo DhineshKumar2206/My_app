@@ -1,69 +1,107 @@
-import React, { Component } from 'react';
-import './Email_verification.css';
+import React from 'react';
 
-export default class Email_verification extends Component {
+class Email_verification  extends React.Component {
 
-    userData;
+  userData;
 
-    constructor(props) {
-        super(props);
+    constructor()
+     {
+      super();
 
-        this.onChangeOtp = this.onChangeOtp.bind(this);
+      this.state = { fields: {}, errors: {} }
+      this.handleChange = this.handleChange.bind(this);
+      this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
-        this.onSubmit = this.onSubmit.bind(this);
+    };
 
-        this.state = { otp: '', }
+    handleChange(e) 
+    {
+      let fields = this.state.fields;
+      fields[e.target.name] = e.target.value;
+      this.setState({ fields });
+      this.setState({ otp: e.target.value })
+  }
+
+    submituserRegistrationForm(e) {
+      e.preventDefault();
+      if (this.validateForm()) {
+          let fields = {};
+          fields["otp"] = "";
+          this.setState({fields:fields});
+          alert("Form submitted");
+      }
+
     }
 
-    // Form Events
-    onChangeOtp(e) {
-        this.setState({ otp: e.target.value })
+    validateForm() {
+
+      let fields = this.state.fields;
+      let errors = {};
+      let formIsValid = true;
+
+      if (!fields["otp"]) {
+        formIsValid = false;
+        errors["otp"] = "*Please enter your otp.";
+      }
+
+      if (typeof fields["otp"] !== "undefined") {
+        if (!fields["otp"].match(/^[0-9]{6}$/)) {
+          formIsValid = false;
+          errors["otp"] = "*Please enter valid 6-digit otp.";
+        }
+      }
+
+      this.setState({
+        errors: errors
+      });
+      return formIsValid;
+
     }
 
-
-    onSubmit(e) {
-        e.preventDefault()
-
-    }
-
-    // React Life Cycle
     componentDidMount() {
-        this.userData = JSON.parse(localStorage.getItem('user'));
+      this.userData = JSON.parse(localStorage.getItem('user'));
 
-        if (localStorage.getItem('user')) {
-            this.setState({
-                otp: this.userData.otp,
-            })
-        } else {
-            this.setState({
-                otp: '',
+      if (localStorage.getItem('user')) {
+          this.setState({
+              otp: this.userData.otp,
+          })
+      } else {
+          this.setState({
+              otp: '',
 
-            })
-        };
-    };
+          })
+      };
+  };
 
-    componentWillUpdate(nextProps, nextState) {
-        localStorage.setItem('user', JSON.stringify(nextState));
-    };
+  componentWillUpdate(nextProps, nextState) {
+      localStorage.setItem('user', JSON.stringify(nextState));
+  };
 
 
-    render() {
-        return (
-            <div className="head">
-            <div className="register">
-                <form onSubmit={this.onSubmit}>
-                    <div>
-                        <label>Otp</label>
-                        <input type="number" value={this.state.otp} 
-                        onChange={this.onChangeOtp} />
-                    </div>
+  render() {
+    return (
+    <div id="main-registration-container">
+     <div id="register">
+        <h3 className="heading">Email_verification</h3>
+        <form name="userRegistrationForm"  onSubmit= {this.submituserRegistrationForm} >
+        <label>Otp</label>
+        <input className="form_input" type="text" name="otp" value={this.state.fields.otp} onChange={this.handleChange} />
+        <div className="errorMsg">{this.state.errors.otp}</div>
+        {/* <input type="button" className="button"  value="Back"/><br />
+        <input type="submit" className="button"  value="Verify"/> */}
+        <a className="style" href="Company_details" > <button type="button" className="button" >
+         Back  </button></a>
+        <button type="submit" className="button" >Verify</button>
+        </form>
+    </div>
+</div>
 
-                    <button type="button" className="btn btn-primary btn-block">
-                    <a href="Company_details" >Back </a></button>
-                    <button type="submit" className="btn btn-primary btn-block">Verify</button>
-                </form>
-            </div>
-        </div>
-        );
-    };
+      );
+  };
+
 };
+
+
+export default Email_verification ;
+
+

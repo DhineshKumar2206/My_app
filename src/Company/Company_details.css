@@ -1,0 +1,25 @@
+.head
+{
+   text-align: center;
+}
+.register 
+{
+    width: 300px;
+    font-family: arial;
+    color: #333333;
+    font-size: 15px;
+    background: #ffffff;
+    margin: 30px auto;
+  }
+  
+  form label, form input 
+  {
+    display: block;
+    width: 90%
+  }
+  
+  form input 
+  {
+    padding: 10px;
+    border: solid 1px #BDC7D8;
+  }
